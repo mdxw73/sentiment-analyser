@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+    <head>
+    </head>
+    <body style="font-family: sans-serif;">
+        <div style="text-align:center; margin-top:2%;">
+            <textarea id="textarea1">adjective</textarea>
+            <textarea id="textarea2">noun</textarea>
+            <textarea id="textarea3">verb</textarea>
+            <textarea id="textarea4">adverb</textarea>
+        </div>
+        <div style="text-align: center;margin-top: 2%;">
+            <button id="button" style="font-size:large;">Press me</button>
+        </div>
+        <div id="text" style="text-align: center;margin-top: 2%;"></div>
+        <script>
+            var adjectives = []
+            var nouns = []
+            var verbs = []
+            var adverbs = []
+            document.getElementById("button").addEventListener("click", () => {
+                document.getElementById("text").innerHTML = ""
+                adjectives = document.getElementById("textarea1").value.split(" ")
+                nouns = document.getElementById("textarea2").value.split(" ")
+                verbs = document.getElementById("textarea3").value.split(" ")
+                adverbs = document.getElementById("textarea4").value.split(" ")
+                var array = [adjectives, nouns, verbs, adverbs]
+                for (i = 0; i < 3; i++) {
+                    var sentence = "The"
+                    for (let j = 0; j < 4; j++) {
+                        const rndInt = Math.floor(Math.random() * (array[j].length))
+                        sentence = sentence + " " + array[j][rndInt]
+                    }
+                    document.getElementById("text").innerHTML = document.getElementById("text").innerHTML + sentence + "<br>"
+                }
+            })
+        </script>
+    </body>
+</html>
