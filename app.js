@@ -6,7 +6,7 @@ app.use(express.static('client'))
 app.use(express.urlencoded({ extended: false }))
 
 app.get('/all', function (req, resp) {
-  resp.json(data)
+  resp.json(queries)
 })
 // app.post('/new/recipe', function (req, resp) {
 //   if (req.body.title === undefined || req.body.href === undefined || req.body.ingredients === undefined || req.body.username === undefined || req.body.image === undefined) {
@@ -35,9 +35,9 @@ app.post('/sms', (req, res) => {
   text=req.body.Body;
   phone=req.body.From;
   id=req.body.SmsSid;
-  const data = JSON.stringify([{id,phone,text}]);
+  const data = JSON.stringify({id,phone,text});
   queries.push(data)
-  fs.writeFileSync('./queries.json', data, null, '\t')
+  fs.writeFileSync('./queries.json', queries, null, '\t')
   const twiml = new MessagingResponse();
   twiml.message('The Robots are coming! Head for the hills!');
   res.writeHead(200, {'Content-Type': 'text/xml'});
