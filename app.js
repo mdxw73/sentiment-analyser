@@ -23,13 +23,6 @@ const http = require('http');
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 require('dotenv').config();
 var client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_TOKEN);
-client.messages
-  .create({
-     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
-     from: '+447700165457',
-     to: '+447436592946'
-   })
-  .then(message => console.log(message.sid));
 app.post('/sms', (req, res) => {
   console.dir(req.body);
   text=req.body.Body;
