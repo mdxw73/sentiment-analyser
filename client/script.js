@@ -24,42 +24,43 @@ document.getElementById('refresh').addEventListener('click', async function (eve
   }
 })
 
-document.getElementById('edit').addEventListener('click', function (event) {
-  document.forms.form.parentNode.replaceChild(document.forms.form.cloneNode(true), document.forms.form)
-  document.forms.form.innerHTML =
-    `<input class="form-control me-2" type="search" placeholder="Title" aria-label="Search" id="text">
-    <button class="btn btn-outline-success" type="submit">Search</button>`
-  document.forms.form.action = 'http://127.0.0.1:8090/recipe/title'
-  document.forms.form.method = 'get'
-  document.forms.form.addEventListener('submit', async function (event) {
-    await makeRequest(event)
-  })
-})
+// document.getElementById('edit').addEventListener('click', function (event) {
+//   document.forms.form.parentNode.replaceChild(document.forms.form.cloneNode(true), document.forms.form)
+//   document.forms.form.innerHTML =
+//     `<input class="form-control me-2" type="search" placeholder="Title" aria-label="Search" id="text">
+//     <button class="btn btn-outline-success" type="submit">Search</button>`
+//   document.forms.form.action = 'http://127.0.0.1:8090/recipe/title'
+//   document.forms.form.method = 'get'
+//   document.forms.form.addEventListener('submit', async function (event) {
+//     await makeRequest(event)
+//   })
+// })
 
-async function makeRequest (event) {
-  event.preventDefault()
-  try {
-    let response
-    if (event.target.method === 'post') {
-      response = await fetch(event.target.action, {
-        method: event.target.method,
-        body: new URLSearchParams(new FormData(event.target))
-      })
-    } else {
-      response = await fetch(event.target.action + '?search=' + document.getElementById('text').value)
-    }
-    if (!response.ok) {
-      throw new Error('404')
-    }
-    const body = await response.text()
-    updatePage(body)
-  } catch (error) {
-    alert(error)
-  }
-}
+// async function makeRequest (event) {
+//   event.preventDefault()
+//   try {
+//     let response
+//     if (event.target.method === 'post') {
+//       response = await fetch(event.target.action, {
+//         method: event.target.method,
+//         body: new URLSearchParams(new FormData(event.target))
+//       })
+//     } else {
+//       response = await fetch(event.target.action + '?search=' + document.getElementById('text').value)
+//     }
+//     if (!response.ok) {
+//       throw new Error('404')
+//     }
+//     const body = await response.text()
+//     updatePage(body)
+//   } catch (error) {
+//     alert(error)
+//   }
+// }
 
 function updatePage (body) {
-  const queries = JSON.parse(data)
+  console.log(JSON.parse(body))
+  const queries = JSON.parse(body)
   order(queries)
   let content = ''
   for (let i = 0; i < queries.length; i++) {
@@ -77,25 +78,37 @@ function updatePage (body) {
 }
 
 function order (queries) {
+  let keywords = [['money','mortgage'],['delete','login'],['question','request']]
+  var priorities = []
+  for (query of queries) {
+    var priority = Number.MAX_SAFE_INTEGER
+    for (word of query.text.split(' ')) {
+      if (keywords[0].includes(word)) {
+        priority -= 3
+      } else if (keywords[1].includes(word) && priority > 2) {
+        priority -= 2
+      } else if (keywords[2].includes(word) && priority > 3) {
+        priority -= 1
+      }
+    }
+    priorities.push(priority)
+  }
+  var highest = 0
+  var swap = true
+  while (swap == true) {
+    swap = false
+    for (let i = 0; i < priorities.length-1; i++) {
+      if (priorities[i] > priorities[i+1]) {
+        var temp = priorities[i]
+        priorities[i] = priorities[i+1]
+        priorities[i+1] = temp
+        temp = queries[i]
+        queries[i] = queries[i+1]
+        queries[i+1] = temp
+        swap = true
+      }
+    }
+  }
 }
 
-data = `
-[
-  {
-    "id": "#",
-    "number": "+44...",
-    "text": "request"
-  },
-  {
-    "id": "#",
-    "number": "+44...",
-    "text": "money"
-  },
-  {
-    "id": "#",
-    "number": "+44...",
-    "text": "login"
-  }
-]`
-
-updatePage()
+start()
