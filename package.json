@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/mdxw73/durhack/issues"
   },
-  "homepage": "https://github.com/mdxw73/durhack#readme"
+  "homepage": "https://github.com/mdxw73/durhack#readme",
+  "dependencies": {
+    "twilio": "^3.74.0"
+  }
 }
