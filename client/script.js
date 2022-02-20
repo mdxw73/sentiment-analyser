@@ -1,66 +1,88 @@
-async function refresh () {
+var cachedOrder = []
+
+async function refresh (done) {
   try {
     const response = await fetch('https://durhack-2022.herokuapp.com/all')
     if (!response.ok) {
       throw new Error('404')
     }
     const body = await response.text()
-    updatePage(body)
+    updatePage(body,done)
   } catch (error) {
     alert(error)
   }
 }
 
-document.getElementById('refresh').addEventListener('click', async function (event) {
-  refresh()
+document.getElementById('inbox').addEventListener('click', async function (event) {
+  refresh(false)
 })
 
-// document.getElementById('edit').addEventListener('click', function (event) {
-//   document.forms.form.parentNode.replaceChild(document.forms.form.cloneNode(true), document.forms.form)
-//   document.forms.form.innerHTML =
-//     `<input class="form-control me-2" type="search" placeholder="Title" aria-label="Search" id="text">
-//     <button class="btn btn-outline-success" type="submit">Search</button>`
-//   document.forms.form.action = 'http://127.0.0.1:8090/recipe/title'
-//   document.forms.form.method = 'get'
-//   document.forms.form.addEventListener('submit', async function (event) {
-//     await makeRequest(event)
-//   })
-// })
+document.getElementById('archive').addEventListener('click', async function (event) {
+  refresh(true)
+})
 
-async function updatePage (body) {
+async function updatePage (body,done) {
   var queries = JSON.parse(body)
-  queries = await order(queries)
+  if (cachedOrder.length === 0) {
+    // queries = await order(queries)
+    for (let i = 0; i < queries.length; i++) {
+      cachedOrder.push(queries[i].id)
+    }
+  } else {
+    var temp = []
+    for (let i = 0; i < queries.length; i++) {
+      for (let j = 0; j < queries.length; j++) {
+        if (cachedOrder[i] == queries[j].id) {
+          temp.push(queries[j])
+        }
+      }
+    }
+    queries = temp
+  }
   var content = ''
   for (let i = 0; i < queries.length; i++) {
-    if (queries[i].done == false) {
-      content +=
-      `<div class="row" style="margin-bottom: 20px;">
-          <div class="card bg-light" style="width: 100%;box-shadow: 10px 10px 10px lightgray;">
-              <div class="card-body">
-                  <h5 class="card-title">${queries[i].phone}</h5>
-                  <p class="card-text"><i>${queries[i].text}</i></p>
-                  <button class="btn btn-outline-success" id="done${i}" type="submit">Done<p hidden>*${queries[i].id}*</p></button>
-              </div>
-          </div>
-      </div>`
+    if (queries[i].done == done) {
+      if (done == false) {
+        content +=
+        `<div class="row" style="margin-bottom: 20px;">
+            <div class="card bg-light" style="width: 100%;box-shadow: 10px 10px 10px lightgray;">
+                <div class="card-body">
+                    <h5 class="card-title">${queries[i].phone}</h5>
+                    <p class="card-text"><i>${queries[i].text}</i></p>
+                    <button class="btn btn-outline-success" id="done${i}" type="submit">Done<p hidden>*${queries[i].id}*</p></button>
+                </div>
+            </div>
+        </div>`
+      } else {
+        content +=
+        `<div class="row" style="margin-bottom: 20px;">
+            <div class="card bg-light" style="width: 100%;box-shadow: 10px 10px 10px lightgray;">
+                <div class="card-body">
+                    <h5 class="card-title">${queries[i].phone}</h5>
+                    <p class="card-text"><i>${queries[i].text}</i></p>
+                    <button class="btn btn-outline-success" id="done${i}" type="submit">Undo<p hidden>*${queries[i].id}*</p></button>
+                </div>
+            </div>
+        </div>`
+      }
     }
   }
   document.getElementById('content').innerHTML = content
   for (let i = 0; i < queries.length; i++) {
-    if (queries[i].done == false) {
+    if (queries[i].done == done) {
       document.getElementById(`done${i}`).addEventListener('click', async function (event) {
         try {
           let id = document.getElementById(`done${i}`).innerHTML.split('*')
           let response = await fetch('https://durhack-2022.herokuapp.com/done', {
             method: 'post',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({'id': id[1]})
+            body: JSON.stringify({'id': id[1], 'done': !done})
           })
           if (!response.ok) {
             throw new Error('404')
           }
           const body = await response.text()
-          updatePage(body)
+          updatePage(body,done)
         } catch (error) {
           alert(error)
         }
@@ -128,4 +150,4 @@ async function getSentiment (text) {
   }
 }
 
-refresh()
+refresh(false)
