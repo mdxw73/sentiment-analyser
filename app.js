@@ -81,15 +81,39 @@ app.post('/sms', (req, res) => {
 // POST chatbot
 app.post('/chatbot', (req, res) => {
     let phone = req.body.UserIdentifier
+    let text = req.body.CurrentInput
+    let timeNow = Date.now()
 
-    console.log(req.body);
+    // console.log(req.body.CurrentInput, "hi")
+
+    // console.log(JSON.parse(req.body.Memory), "memory")
+    // console.log(JSON.parse(req.body.Memory).twilio.sms.MessageSid, "id")
+
+    let id = JSON.parse(req.body.Memory).twilio.sms.MessageSid
+
+    // console.log(id, text, phone);
 
     client.messages
         .create({body: 'Connecting you to agent\nThank you for your patience', from: process.env.fromPhoneNumber, to: phone})
         .then(message => {
             console.log(message.sid)
-            res.status(200);
         });
+
+    getSnapshot()
+
+    const data = { id, phone, text, "done": false, "timestamp": timeNow };
+    queries.push(data)
+
+    database.ref("queries").set(queries, function (error) {
+        if (error) {
+            // The write failed...
+            console.log("Failed with error: " + error)
+        } else {
+            // The write was successful...
+            console.log("success")
+        }
+    })
+
 });
 
 // POST done
