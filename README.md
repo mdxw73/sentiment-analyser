@@ -1,6 +1,6 @@
-# DurHack
+# DurHack 2022 
 
-## Inspiration
+## Inspirations
 - The problem introduced by Atom Bank on ordering customer queries
 - The initial demonstration of building an automated SMS messaging app using Twilio
 
@@ -13,7 +13,7 @@
 - Order the queries based on ML semantic analysis, keyword frequency detection and date created
 
 ## How we built it
-- Interactions via SMS are done using Twilio
+- Interactions via SMS (SMS chats) are done using Twilio
 - The REST API was built with NodeJS
 - The fetch API and frontend website was built with Javascript, HTML and CSS
 - ML semantic analysis was done using a third party API called MonkeyLearn
@@ -24,8 +24,9 @@
 - We decided to use a cloud hosting platform as we ran into issues running the Twilio endpoints locally
 
 ## Accomplishments that we are proud of
+- Understanding how to use and get Twilio to work without any prior knowledge
 - Developing a usable platform that provides useful functionalities and unifies companies and customers
-- Learning Firebase without prior knowlege
+- Learning Firebase without prior knowledge
 
 ## What we learned
 - How to implement automated SMS messaging and a chatbot with Twilio
