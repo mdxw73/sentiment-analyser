@@ -28,7 +28,7 @@ document.getElementById('archive').addEventListener('click', async function (eve
 async function updatePage (body,done) {
   var queries = JSON.parse(body)
   if (cachedOrder.length === 0) {
-    queries = await order(queries)
+    // queries = await order(queries)
     document.getElementById('spinner').remove()
     for (let i = 0; i < queries.length; i++) {
       cachedOrder.push(queries[i].id)
@@ -55,7 +55,7 @@ async function updatePage (body,done) {
                     <h5 class="card-title">${queries[i].phone}</h5>
                     <p class="card-text"><i>${queries[i].text}</i></p>
                     <button class="btn btn-outline-success" id="done${i}" type="submit">Done<p hidden>*${queries[i].id}*</p></button>
-                    <p class="text-muted text-right position-absolute top-0 end-0" style="margin-top: 0.5%;margin-right: 1%"><small>${new Date(query.timestamp).getDay()} Days Ago</small></p>
+                    <p class="text-muted text-right position-absolute top-0 end-0" style="margin-top: 0.5%;margin-right: 1%"><small>${new Date(queries[i].timestamp).getDay()} Days Ago</small></p>
                 </div>
             </div>
         </div>`
