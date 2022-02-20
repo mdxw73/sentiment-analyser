@@ -1,7 +1,14 @@
-const queries = require('./queries.json')
 const fs = require('fs')
 const express = require('express')
 const app = express()
+const { query } = require('express')
+
+// twilio initalisation
+const { ApplicationPage } = require('twilio/lib/rest/api/v2010/account/application')
+const MessagingResponse = require('twilio').twiml.MessagingResponse;
+require('dotenv').config();
+var client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_TOKEN);
+
 app.use(express.json())
 app.use(express.static('client'))
 app.use(express.urlencoded({ extended: true }))
@@ -10,97 +17,124 @@ app.use(express.urlencoded({ extended: true }))
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
     );
     next();
-  });
-
-app.get('/all', function (req, resp) {
-  resp.json(queries)
-})
-
-
-const http = require('http');
-const { query } = require('express')
-const { ApplicationPage } = require('twilio/lib/rest/api/v2010/account/application')
-const MessagingResponse = require('twilio').twiml.MessagingResponse;
-require('dotenv').config();
-var client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_TOKEN);
-
-// client.messages
-//   .create({
-//      body: 'Thank you for contacting us!',
-//      from: '+447700165457',
-//      to: '+447436592946'
-//    })
-//   .then(message => console.log(message.sid));
-
-app.post('/sms', (req, res) => {
-//   console.dir(req.body);
-  text=req.body.Body;
-  phone=req.body.From;
-  id=req.body.SmsSid;
-  const data = {id,phone,text,"done":false};
-  queries.push(data)
-  fs.writeFileSync('./queries.json', JSON.stringify(queries))
-  const twiml = new MessagingResponse();
-  twiml.message('Thank you for contacting us!');
-  res.writeHead(200, {'Content-Type': 'text/xml'});
-  res.end(twiml.toString());
 });
 
-app.post('/done', (req, res) => {
+// firebase initalisation
+var admin = require("firebase-admin");
+var serviceAccount = require("./serviceAccountKey.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://durhack-2022-default-rtdb.europe-west1.firebasedatabase.app"
+});
+
+const database = admin.database()
+var queries;
+
+function getSnapshot() {
+    database.ref("queries").on('value', (snapshot) => {
+        queries = snapshot.val()
+        }, (errorObject) => {
+        console.log('The read failed: ' + errorObject.name);
+        });
+}
+
+getSnapshot()
+
+// GET all
+app.get('/all', function (req, resp) {
+    getSnapshot()
+    resp.json(queries)
+})
+
+// POST sms
+app.post('/sms', (req, res) => {
     //   console.dir(req.body);
-      let id = req.body.id
-      let doneTF = req.body.done
+    text = req.body.Body;
+    phone = req.body.From;
+    id = req.body.SmsSid;
 
-    //   console.log(req.body);
+    getSnapshot()
 
-      for (const query of queries) {
-          if (query.id == id) {
-              query.done = doneTF
-            //   console.log("hi");
-          }
-      }
+    const data = { id, phone, text, "done": false, "timestamp": Date.now() };
+    queries.push(data)
 
-      console.log(queries)
+    database.ref("queries").set(queries, function (error) {
+        if (error) {
+            // The write failed...
+            console.log("Failed with error: " + error)
+        } else {
+            // The write was successful...
+            console.log("success")
+        }
+    })
 
-    //   const data = {id,phone,text};
-    //   queries.push(data)
-      fs.writeFileSync('./queries.json', JSON.stringify(queries, null, 2))
-    //   const twiml = new MessagingResponse();
-    //   twiml.message('Thank you for contacting us!');
-    //   res.writeHead(200, {'Content-Type': 'text/xml'});
-    //   res.end(twiml.toString());
-    res.json(queries)
+    const twiml = new MessagingResponse();
+    twiml.message('Thank you for contacting Atom Bank!');
+    res.writeHead(200, { 'Content-Type': 'text/xml' });
+    res.end(twiml.toString());
+});
 
+// POST chatbot
+app.post('/chatbot', (req, res) => {
+    let phone = req.body.UserIdentifier
+
+    console.log(req.body);
+
+    client.messages
+        .create({body: 'Connecting you to agent\nThank you for your patience', from: process.env.fromPhoneNumber, to: phone})
+        .then(message => {
+            console.log(message.sid)
+            res.status(200);
+        });
+});
+
+// POST done
+app.post('/done', (req, res) => {
+    let id = req.body.id
+    let doneTF = req.body.done
+
+    getSnapshot()
+
+    for (const query of queries) {
+        if (query.id == id) {
+            var index = queries.indexOf(query); // 1
+        }
+    }
+
+    const firebaseUpdate = database.ref('queries/' + index)
+    firebaseUpdate.update({
+        'done': doneTF
     });
 
-    app.get('/undone', (req, res) => {
-        //   console.dir(req.body);
-        //   let id = req.body.id
+    getSnapshot()
 
-          for (const query of queries) {
-            query.done = false
-          }
+    res.json(queries)
 
-          console.log(queries)
+});
 
-        //   const data = {id,phone,text};
-        //   queries.push(data)
-          fs.writeFileSync('./queries.json', JSON.stringify(queries, null, 2))
-        //   const twiml = new MessagingResponse();
-        //   twiml.message('Thank you for contacting us!');
-        //   res.writeHead(200, {'Content-Type': 'text/xml'});
-        //   res.end(twiml.toString());
-        res.json(queries)
+// POST undone
+app.get('/undone', (req, res) => {
 
-        });
+    for (const query of queries) {
+        query.done = false
+    }
 
+    database.ref("queries").set(queries, function (error) {
+        if (error) {
+            // The write failed...
+            console.log("Failed with error: " + error)
+        } else {
+            // The write was successful...
+            console.log("success")
+        }
+    })
 
-http.createServer(app).listen(1337, () => {
-  console.log('Express server listening on port 1337');
+    res.json(queries)
+
 });
 
 module.exports = app

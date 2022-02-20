@@ -1,32 +1,33 @@
-[
-    {
-        "id":"SM2af50b8d86ca96b1207fc8b2f0a228cd",
-        "phone":"+447805739281",
-        "text":"I have missed a payment, what do I do?"
-    },
-    {
-        "id":"SM9f89b221d57525091fd14ff0ca1d3f98",
-        "phone":"+447805739281",
-        "text":"How do I start a mortgage application?"
-    },
-    {
-        "id":"SM0c7bd8c9ee94b6ca44bdb02b88ffb0e1",
-        "phone":"+447413876757",
-        "text":"I'm having issues opening an account. Please help."
-    },
-    {
-        "id":"SM8e40882c558cc2b2c7a199cbda8b8c0a",
-        "phone":"+447805739281",
-        "text":"I need some help setting up my account, I'm having problems validating my identity."
-    },
-    {
-        "id":"SM89a9ef3f0f0709274c77703e20b8a61d",
-        "phone":"+447805739281",
-        "text":"I'm afraid my bank details have been stolen. What should I do? Will I lose money if any unauthorised transactions are made form my account?"
-    },
-    {
-        "id":"SM2675939fbc8665eef367c7fb615f7c97",
-        "phone":"+447805739281",
-        "text":"What services do you offer?"
-    }
-]
+{
+  "queries" : [ {
+    "done" : false,
+    "id" : "SM2af50b8d86ca96b1207fc8b2f0a228cd",
+    "phone" : "+447805739281",
+    "text" : "I have missed a payment, what do I do?"
+  }, {
+    "done" : false,
+    "id" : "SM9f89b221d57525091fd14ff0ca1d3f98",
+    "phone" : "+447805739281",
+    "text" : "How do I start a mortgage application?"
+  }, {
+    "done" : false,
+    "id" : "SM0c7bd8c9ee94b6ca44bdb02b88ffb0e1",
+    "phone" : "+447413876757",
+    "text" : "I'm having issues opening an account. Please help."
+  }, {
+    "done" : false,
+    "id" : "SM8e40882c558cc2b2c7a199cbda8b8c0a",
+    "phone" : "+447805739281",
+    "text" : "I need some help setting up my account, I'm having problems validating my identity."
+  }, {
+    "done" : false,
+    "id" : "SM89a9ef3f0f0709274c77703e20b8a61d",
+    "phone" : "+447805739281",
+    "text" : "I'm afraid my bank details have been stolen. What should I do? Will I lose money if any unauthorised transactions are made form my account?"
+  }, {
+    "done" : false,
+    "id" : "SM2675939fbc8665eef367c7fb615f7c97",
+    "phone" : "+447805739281",
+    "text" : "What services do you offer?"
+  } ]
+}
