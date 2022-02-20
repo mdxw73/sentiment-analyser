@@ -35,10 +35,10 @@ async function updatePage (body,done) {
     }
   } else {
     var temp = []
-    for (let i = 0; i < queries.length; i++) {
-      for (let j = 0; j < cachedOrder.length; j++) {
-        if (cachedOrder[j] == queries[i].id) {
-          temp.push(queries[i])
+    for (let i = 0; i < cachedOrder.length; i++) {
+      for (let j = 0; j < queries.length; j++) {
+        if (cachedOrder[i] == queries[j].id) {
+          temp.push(queries[j])
         }
       }
     }
