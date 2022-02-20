@@ -1,6 +1,6 @@
-# DurHack
+# DurHack 2022 
 
-## Inspiration
+## Inspirations
 - The problem introduced by Atom Bank on ordering customer queries
 - The initial demonstration of building an automated SMS messaging app using Twilio
 
