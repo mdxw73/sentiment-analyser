@@ -25,6 +25,7 @@ async function updatePage (body,done) {
   var queries = JSON.parse(body)
   if (cachedOrder.length === 0) {
     // queries = await order(queries)
+    document.getElementById('spinner').remove()
     for (let i = 0; i < queries.length; i++) {
       cachedOrder.push(queries[i].id)
     }
@@ -67,7 +68,11 @@ async function updatePage (body,done) {
       }
     }
   }
-  document.getElementById('content').innerHTML = content
+  if (content == '') {
+    document.getElementById('content').innerHTML = '<p style="text-align: center;color: gray;font-size: 30px;">Empty</h5>'
+  } else {
+    document.getElementById('content').innerHTML = content
+  }
   for (let i = 0; i < queries.length; i++) {
     if (queries[i].done == done) {
       document.getElementById(`done${i}`).addEventListener('click', async function (event) {
