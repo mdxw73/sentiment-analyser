@@ -24,7 +24,7 @@ document.getElementById('archive').addEventListener('click', async function (eve
 async function updatePage (body,done) {
   var queries = JSON.parse(body)
   if (cachedOrder.length === 0) {
-    // queries = await order(queries)
+    queries = await order(queries)
     document.getElementById('spinner').remove()
     for (let i = 0; i < queries.length; i++) {
       cachedOrder.push(queries[i].id)
