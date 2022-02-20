@@ -15,16 +15,20 @@ async function refresh (done) {
 
 document.getElementById('inbox').addEventListener('click', async function (event) {
   refresh(false)
+  document.getElementById('inbox').classList.add('disabled')
+  document.getElementById('archive').classList.remove('disabled')
 })
 
 document.getElementById('archive').addEventListener('click', async function (event) {
   refresh(true)
+  document.getElementById('archive').classList.add('disabled')
+  document.getElementById('inbox').classList.remove('disabled')
 })
 
 async function updatePage (body,done) {
   var queries = JSON.parse(body)
   if (cachedOrder.length === 0) {
-    queries = await order(queries)
+    // queries = await order(queries)
     document.getElementById('spinner').remove()
     for (let i = 0; i < queries.length; i++) {
       cachedOrder.push(queries[i].id)
