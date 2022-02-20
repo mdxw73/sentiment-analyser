@@ -113,7 +113,7 @@ async function updatePage (body,done) {
 }
 
 async function order (queries) {
-  let keywords = [['missed','payment'],['delete','login'],['question','request']]
+  let keywords = [['missed','payment','mortgage'],['delete','login','validate'],['question','request','details']]
   var priorities = []
   for (query of queries) {
     var score = 0
@@ -121,9 +121,9 @@ async function order (queries) {
     for (word of query.text.split(' ')) {
       if (keywords[0].includes(word.toLowerCase())) {
         score -= 0.5
-      } else if (keywords[1].includes(word.toLowerCase()) && priority > 2) {
+      } else if (keywords[1].includes(word.toLowerCase()) && score > 2) {
         score -= 0.25
-      } else if (keywords[2].includes(word.toLowerCase()) && priority > 3) {
+      } else if (keywords[2].includes(word.toLowerCase()) && score > 3) {
         score -= 0.1
       }
     }
