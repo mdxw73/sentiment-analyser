@@ -36,9 +36,9 @@ async function updatePage (body,done) {
   } else {
     var temp = []
     for (let i = 0; i < queries.length; i++) {
-      for (let j = 0; j < queries.length; j++) {
-        if (cachedOrder[i] == queries[j].id) {
-          temp.push(queries[j])
+      for (let j = 0; j < cachedOrder.length; j++) {
+        if (cachedOrder[j] == queries[i].id) {
+          temp.push(queries[i])
         }
       }
     }
@@ -52,7 +52,7 @@ async function updatePage (body,done) {
         `<div class="row" style="margin-bottom: 20px;">
             <div class="card bg-light" style="width: 100%;box-shadow: 10px 10px 10px lightgray;">
                 <div class="card-body">
-                    <h5 class="card-title">${queries[i].phone}</h5>
+                    <h5 class="card-title"><a id="phone${i}" href="#">${queries[i].phone}</a></h5>
                     <p class="card-text"><i>${queries[i].text}</i></p>
                     <button class="btn btn-outline-success" id="done${i}" type="submit">Done<p hidden>*${queries[i].id}*</p></button>
                     <p class="text-muted text-right position-absolute top-0 end-0" style="margin-top: 0.5%;margin-right: 1%"><small>${new Date(queries[i].timestamp).getDay()} Days Ago</small></p>
@@ -64,7 +64,7 @@ async function updatePage (body,done) {
         `<div class="row" style="margin-bottom: 20px;">
             <div class="card bg-light" style="width: 100%;box-shadow: 10px 10px 10px lightgray;">
                 <div class="card-body">
-                    <h5 class="card-title">${queries[i].phone}</h5>
+                    <h5 class="card-title"><a id="phone${i}" href="#">${queries[i].phone}</a></h5>
                     <p class="card-text"><i>${queries[i].text}</i></p>
                     <button class="btn btn-outline-success" id="done${i}" type="submit">Undo<p hidden>*${queries[i].id}*</p></button>
                 </div>
@@ -79,7 +79,7 @@ async function updatePage (body,done) {
     document.getElementById('content').innerHTML = content
   }
   for (let i = 0; i < queries.length; i++) {
-    if (queries[i].done == done) {
+    if (queries[i].done == done) { // Done is different to .done. One is whether the query is done and the other is whether we are in inbox or archive
       document.getElementById(`done${i}`).addEventListener('click', async function (event) {
         try {
           let id = document.getElementById(`done${i}`).innerHTML.split('*')
@@ -96,6 +96,17 @@ async function updatePage (body,done) {
         } catch (error) {
           alert(error)
         }
+      })
+      document.getElementById(`phone${i}`).addEventListener('click', async function (event) {
+        document.getElementById('inbox').classList.remove('disabled')
+        document.getElementById('archive').classList.remove('disabled')
+        var temp = []
+        for (let j = 0; j < queries.length; j++) {
+          if (document.getElementById(`phone${i}`).innerText == queries[j].phone) {
+            temp.push(queries[j])
+          }
+        }
+        updatePage(JSON.stringify(temp),done)
       })
     }
   }
