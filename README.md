@@ -41,9 +41,10 @@
 - We decided to use a cloud hosting platform as we ran into issues running the Twilio endpoints locally
 - Initially we used a JSON file and the cloud hosting platform deleted it every time the server went down. To overcome this, instead of storing the data locally, we stored it in Firebase
 - We used ngrok to solve an error that we were facing in the Terminal. ngrok allowed us to expose a web server running on our local machine to the Internet.
-- We had to import the module dotenv in order to protect the authentication token and account SID
+- We had to import the module dotenv in order to protect the authentication token and account SID from getting hacked.
 
 ## What accomplishments are we proud of as a result of Sentiment Analyser?
+- Developing a useful web application within 24 hours that solves a real world problem efficiently
 - Understanding how to use and get Twilio to work without any prior knowledge
 - Developing a usable platform that provides useful functionalities
 - Learning Firebase without prior knowledge
