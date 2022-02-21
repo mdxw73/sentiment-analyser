@@ -160,7 +160,7 @@ async function getSentiment (text) {
     response = await fetch('https://api.monkeylearn.com/v3/classifiers/cl_pi3C7JiL/classify/', {
       method: 'post',
       body: JSON.stringify({'data': [text]}),
-      headers: {'Authorization': 'Token 94ea2fcc40e7a0ba7f57788297727208e9ab2ff6','Content-Type': 'application/json'}
+      headers: {'Authorization': process.env.newMonekyLearn,'Content-Type': 'application/json'}
     })
     if (!response.ok) {
       throw new Error('404')
